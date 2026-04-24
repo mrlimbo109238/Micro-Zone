@@ -1,0 +1,19 @@
+{
+    "package": "com.limbo.microzone",
+    "name": "Micro Zone",
+    "icon_name": "Micro Zone",
+    "version": "0.1.0",
+    "numeric_version": 1,
+    "orientation": "sensorLandscape",
+    "permissions": ["VIBRATE"],
+    "include_pil": false,
+    "include_sqlite": false,
+    "layout": null,
+    "source": false,
+    "expansion": false,
+    "google_play_key": null,
+    "google_play_salt": null,
+    "store": "none",
+    "update_icons": true,
+    "update_always": true
+}

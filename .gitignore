@@ -1,0 +1,35 @@
+# Ren'Py generated files
+*.rpyc
+*.rpymc
+*.rpyb
+cache/
+saves/
+log.txt
+errors.txt
+traceback.txt
+game/saves/
+game/cache/
+game/log.txt
+game/errors.txt
+game/traceback.txt
+
+# Ren'Py build artifacts
+dist/
+/tmp/
+bytecode.rpyb
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Android keystore (DO NOT COMMIT)
+android.keystore
+bundle.keystore
+*.keystore
+*.jks

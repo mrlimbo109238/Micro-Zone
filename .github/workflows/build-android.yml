@@ -1,0 +1,119 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  RENPY_VERSION: "8.3.7"
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          path: project
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq unzip wget p7zip-full
+
+      - name: Cache Ren'Py SDK + RAPT
+        id: cache-renpy
+        uses: actions/cache@v4
+        with:
+          path: renpy
+          key: renpy-${{ env.RENPY_VERSION }}-rapt-v2
+
+      - name: Download Ren'Py SDK
+        if: steps.cache-renpy.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p renpy
+          cd renpy
+          echo "Downloading Ren'Py ${RENPY_VERSION} SDK..."
+          wget -q --show-progress "https://www.renpy.org/dl/${RENPY_VERSION}/renpy-${RENPY_VERSION}-sdk.tar.bz2"
+          tar xf "renpy-${RENPY_VERSION}-sdk.tar.bz2"
+          mv "renpy-${RENPY_VERSION}-sdk"/* .
+          mv "renpy-${RENPY_VERSION}-sdk"/.* . 2>/dev/null || true
+          rmdir "renpy-${RENPY_VERSION}-sdk"
+          rm -f "renpy-${RENPY_VERSION}-sdk.tar.bz2"
+
+          echo "Downloading RAPT (Android packaging)..."
+          wget -q --show-progress "https://www.renpy.org/dl/${RENPY_VERSION}/renpy-${RENPY_VERSION}-rapt.zip"
+          unzip -q "renpy-${RENPY_VERSION}-rapt.zip"
+          rm -f "renpy-${RENPY_VERSION}-rapt.zip"
+          ls -la
+          chmod +x renpy.sh
+
+      - name: Install Android SDK via RAPT
+        if: steps.cache-renpy.outputs.cache-hit != 'true'
+        run: |
+          cd renpy
+          # Accept licenses and install Android SDK components non-interactively
+          echo "Installing Android SDK (this takes a while)..."
+          # Run Ren'Py's Android install command
+          ./renpy.sh launcher android_build || true
+          # Check rapt was set up
+          ls -la rapt/ || true
+
+      - name: Show project structure
+        run: |
+          echo "=== renpy/ ==="
+          ls -la renpy/ | head -30
+          echo "=== renpy/rapt/ ==="
+          ls -la renpy/rapt/ 2>/dev/null | head -20 || echo "no rapt dir"
+          echo "=== project/ ==="
+          ls -la project/
+
+      - name: Build Android APK
+        run: |
+          cd renpy
+          echo "Building APK for project..."
+          ./renpy.sh launcher android_build ../project
+
+      - name: Find built APKs
+        id: find-apk
+        run: |
+          echo "Searching for APK files..."
+          find . -name "*.apk" -type f 2>/dev/null | tee apks.txt
+          APK_COUNT=$(wc -l < apks.txt)
+          echo "Found $APK_COUNT APK(s)"
+          echo "apk_count=$APK_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        if: steps.find-apk.outputs.apk_count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: micro-zone-android-apk
+          path: |
+            project/bin/*.apk
+            project/dist/*.apk
+            **/*.apk
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: |
+            renpy/rapt/project/
+            project/*.log
+            project/log.txt
+          if-no-files-found: ignore
+          retention-days: 7

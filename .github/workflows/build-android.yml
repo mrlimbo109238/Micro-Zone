@@ -68,6 +68,25 @@ jobs:
           echo "=== project/ ==="
           ls -la project/
 
+      - name: Generate signing keystores
+        run: |
+          # RAPT signs the release APK + AAB, so we need both keystores.
+          # For an open-source / hobby build we generate ephemeral keystores
+          # on every CI run. Anyone who wants to publish to Play Store should
+          # replace these with stable keystores stored as GitHub secrets.
+          cd project
+          for ks in android.keystore bundle.keystore; do
+            if [ ! -f "$ks" ]; then
+              keytool -genkeypair -v \
+                -keystore "$ks" \
+                -alias android \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass android -keypass android \
+                -dname "CN=Micro Zone, OU=Dev, O=Limbo, L=City, S=State, C=US"
+            fi
+          done
+          ls -la *.keystore
+
       - name: Build Android APK
         env:
           SDL_VIDEODRIVER: dummy

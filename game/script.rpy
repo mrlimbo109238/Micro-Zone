@@ -17,11 +17,15 @@
 
 
 ## Объявляем фоновые картинки. Файлы лежат в game/images/.
-image bg1 = "bg_scene_01.png"
-image bg2 = "bg_scene_02.png"
-image bg3 = "bg_scene_03.png"
-image bg4 = "bg_scene_04.png"
-image bg5 = "bg_scene_05.png"
+## Картинки масштабируем до размера игры (1920x1080), чтобы они
+## заполняли экран целиком, а не показывались в исходном размере
+## (некоторые исходники до 5К, поэтому без масштабирования
+## Ren'Py показывал бы их обрезанным куском в центре).
+image bg1 = Transform("bg_scene_01.png", size=(1920, 1080))
+image bg2 = Transform("bg_scene_02.png", size=(1920, 1080))
+image bg3 = Transform("bg_scene_03.png", size=(1920, 1080))
+image bg4 = Transform("bg_scene_04.png", size=(1920, 1080))
+image bg5 = Transform("bg_scene_05.png", size=(1920, 1080))
 
 
 ## Точка входа. Игра всегда начинается с метки "start".

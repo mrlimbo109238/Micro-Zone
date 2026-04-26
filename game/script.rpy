@@ -30,13 +30,14 @@ image bg5 = Transform("bg_scene_05.png", size=(1920, 1080))
 ## Глава 2 — пока стоят серые заглушки. Когда Limbo загрузит реальные
 ## картинки в game/images/ под теми же именами bg_scene_06.png …
 ## bg_scene_12.png, заглушки автоматически заменятся.
-image bg6  = Transform("bg_scene_06.png", size=(1920, 1080))
-image bg7  = Transform("bg_scene_07.png", size=(1920, 1080))
-image bg8  = Transform("bg_scene_08.png", size=(1920, 1080))
-image bg9  = Transform("bg_scene_09.png", size=(1920, 1080))
-image bg10 = Transform("bg_scene_10.png", size=(1920, 1080))
-image bg11 = Transform("bg_scene_11.png", size=(1920, 1080))
-image bg12 = Transform("bg_scene_12.png", size=(1920, 1080))
+image bg6  = Transform("bg_scene_06.png",  size=(1920, 1080))
+image bg7  = Transform("bg_scene_07.png",  size=(1920, 1080))
+image bg8  = Transform("bg_scene_08.png",  size=(1920, 1080))
+image bg8b = Transform("bg_scene_08b.png", size=(1920, 1080))
+image bg9  = Transform("bg_scene_09.png",  size=(1920, 1080))
+image bg10 = Transform("bg_scene_10.png",  size=(1920, 1080))
+image bg11 = Transform("bg_scene_11.png",  size=(1920, 1080))
+image bg12 = Transform("bg_scene_12.png",  size=(1920, 1080))
 
 
 ## Точка входа. Игра всегда начинается с метки "start".
@@ -267,6 +268,12 @@ label chapter_2:
     "Я перевёл взгляд на Аню и замер. Её слабая улыбка исчезла."
 
     a "А-а..."
+
+    # Картинка переключается с момента крика Ани и держится до конца
+    # сцены 3 (потом по переходу к bg9 в сцене 4 уйдёт сама).
+    scene bg8b
+    with dissolve
+
     s "А? Что с тобой? Тебе плохо?!"
     a "ОТОЙДИ!"
     s "Что?!"
@@ -358,7 +365,15 @@ label chapter_2:
     "Страшный пазл начал складываться в моей голове, и от этой догадки кровь стыла в жилах."
     "Девочка, чьи родители погибли... пропавшая дочка... Аня."
 
-    # ---- СЦЕНА 2.7 — возвращение ---------------------------------------
+    # ---- СЦЕНА 2.7 — РОЛИК (без диалога) -------------------------------
+    # Видео играет на чёрном фоне на весь экран. Когда заканчивается —
+    # автоматически идёт следующая сцена. Тапом по экрану ролик можно
+    # пропустить.
+    scene black
+    with fade
+    $ renpy.movie_cutscene("bg_scene_07.mp4")
+
+    # ---- СЦЕНА 2.8 — возвращение в комнату -----------------------------
     scene bg12
     with fade
 

@@ -12,6 +12,12 @@ define s = Character("Саша", color="#4FC3F7")
 define m = Character("Мама", color="#F48FB1")
 define p = Character("Папа", color="#90CAF9")
 
+## Аня — таинственная девочка, которую Саша находит в запертой комнате.
+define a = Character("Аня", color="#CE93D8")
+
+## Валентин — сосед, рассказывающий мрачную историю дома.
+define v = Character("Валентин", color="#BCAAA4")
+
 ## Безымянная подача — описания, атмосфера, действия.
 ## Используется как:  "просто текст в кавычках"
 define narrator = Character(None, what_italic=True)

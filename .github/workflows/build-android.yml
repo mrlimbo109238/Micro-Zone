@@ -59,21 +59,6 @@ jobs:
           ls -la
           chmod +x renpy.sh
 
-      - name: Install Android SDK via RAPT installer
-        if: steps.cache-renpy.outputs.cache-hit != 'true'
-        env:
-          SDL_VIDEODRIVER: dummy
-          SDL_AUDIODRIVER: dummy
-        run: |
-          cd renpy/rapt
-          echo "Installing Android SDK (downloads ~1GB, takes a few minutes)..."
-          # 'installsdk' is a non-interactive bootstrap that downloads the
-          # Android command-line tools, accepts licenses, and installs the
-          # build-tools / platform / NDK that RAPT requires.
-          xvfb-run -a ../renpy.sh android.py installsdk
-          echo "Android SDK install done. Contents of renpy/rapt:"
-          ls -la
-
       - name: Show project structure
         run: |
           echo "=== renpy/ ==="

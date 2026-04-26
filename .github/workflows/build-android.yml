@@ -21,23 +21,23 @@ jobs:
         with:
           path: project
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Install system deps
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq unzip wget p7zip-full
+          sudo apt-get install -y -qq unzip wget p7zip-full xvfb
 
       - name: Cache Ren'Py SDK + RAPT
         id: cache-renpy
         uses: actions/cache@v4
         with:
           path: renpy
-          key: renpy-${{ env.RENPY_VERSION }}-rapt-v2
+          key: renpy-${{ env.RENPY_VERSION }}-rapt-jdk21-v3
 
       - name: Download Ren'Py SDK
         if: steps.cache-renpy.outputs.cache-hit != 'true'
@@ -59,17 +59,6 @@ jobs:
           ls -la
           chmod +x renpy.sh
 
-      - name: Install Android SDK via RAPT
-        if: steps.cache-renpy.outputs.cache-hit != 'true'
-        run: |
-          cd renpy
-          # Accept licenses and install Android SDK components non-interactively
-          echo "Installing Android SDK (this takes a while)..."
-          # Run Ren'Py's Android install command
-          ./renpy.sh launcher android_build || true
-          # Check rapt was set up
-          ls -la rapt/ || true
-
       - name: Show project structure
         run: |
           echo "=== renpy/ ==="
@@ -79,11 +68,33 @@ jobs:
           echo "=== project/ ==="
           ls -la project/
 
+      - name: Generate signing keystores
+        run: |
+          # RAPT signs the release APK + AAB, so we need both keystores.
+          # For an open-source / hobby build we generate ephemeral keystores
+          # on every CI run. Anyone who wants to publish to Play Store should
+          # replace these with stable keystores stored as GitHub secrets.
+          cd project
+          for ks in android.keystore bundle.keystore; do
+            if [ ! -f "$ks" ]; then
+              keytool -genkeypair -v \
+                -keystore "$ks" \
+                -alias android \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass android -keypass android \
+                -dname "CN=Micro Zone, OU=Dev, O=Limbo, L=City, S=State, C=US"
+            fi
+          done
+          ls -la *.keystore
+
       - name: Build Android APK
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
         run: |
           cd renpy
           echo "Building APK for project..."
-          ./renpy.sh launcher android_build ../project
+          xvfb-run -a ./renpy.sh launcher android_build ../project
 
       - name: Find built APKs
         id: find-apk

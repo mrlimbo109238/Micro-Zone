@@ -37,9 +37,9 @@ define config.has_music = True
 define config.has_voice = True
 
 ## Громкость по умолчанию (0.0 - тишина, 1.0 - максимум).
-default preferences.volumes["music"] = 0.7
-default preferences.volumes["sfx"] = 0.8
-default preferences.volumes["voice"] = 1.0
+define config.default_music_volume = 0.7
+define config.default_sfx_volume = 0.8
+define config.default_voice_volume = 1.0
 
 ################################################################################
 ## Автосохранение и переходы

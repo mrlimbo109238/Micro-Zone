@@ -30,7 +30,7 @@ jobs:
       - name: Install system deps
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq unzip wget p7zip-full
+          sudo apt-get install -y -qq unzip wget p7zip-full xvfb
 
       - name: Cache Ren'Py SDK + RAPT
         id: cache-renpy
@@ -61,13 +61,13 @@ jobs:
 
       - name: Install Android SDK via RAPT
         if: steps.cache-renpy.outputs.cache-hit != 'true'
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
         run: |
           cd renpy
-          # Accept licenses and install Android SDK components non-interactively
           echo "Installing Android SDK (this takes a while)..."
-          # Run Ren'Py's Android install command
-          ./renpy.sh launcher android_build || true
-          # Check rapt was set up
+          xvfb-run -a ./renpy.sh launcher android_build || true
           ls -la rapt/ || true
 
       - name: Show project structure
@@ -80,10 +80,13 @@ jobs:
           ls -la project/
 
       - name: Build Android APK
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
         run: |
           cd renpy
           echo "Building APK for project..."
-          ./renpy.sh launcher android_build ../project
+          xvfb-run -a ./renpy.sh launcher android_build ../project
 
       - name: Find built APKs
         id: find-apk

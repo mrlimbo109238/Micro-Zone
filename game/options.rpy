@@ -46,9 +46,10 @@ define config.default_voice_volume = 1.0
 ## независимо от громкости музыки внутри игры.
 init python:
     renpy.music.register_channel("menu_music", mixer="menu_music", loop=True)
-
-## Громкость по умолчанию для меню-музыки.
-define config.default_menu_music_volume = 0.6
+    # Стартовая громкость для нового микшера (config.default_mixer_volumes
+    # доступен только в init-блоке, поэтому ставим именно тут).
+    config.default_mixer_volumes = dict(config.default_mixer_volumes or {})
+    config.default_mixer_volumes["menu_music"] = 0.6
 
 ################################################################################
 ## Автосохранение и переходы

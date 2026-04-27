@@ -53,7 +53,7 @@ label chapter_1:
     # ---- Заставка главы --------------------------------------------------
     # Игровая музыка играет на отдельном канале "music".
     # Если файла ещё нет — Ren'Py молча пропустит.
-    play music "game_music.mp3" fadein 2.0
+    play music "audio/music/game_music.mp3" fadein 2.0
 
     scene black
     with fade

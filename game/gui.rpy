@@ -1,44 +1,157 @@
 ################################################################################
 ## Micro Zone - Настройки GUI (внешний вид интерфейса)
 ################################################################################
-## Минимальный набор настроек. Полный gui.rpy с темами и кастомизацией
-## создаётся Ren'Py автоматически при первом запуске launcher'а.
-## Если захочешь кастомный стиль — замени этот файл на сгенерированный
-## из Ren'Py SDK (через кнопку "Change/Update GUI" в launcher'е).
+## Limbo: тут размеры шрифтов, цвета, кастомный шрифт, окно диалога.
+## Если что-то выглядит криво — пиши, поправлю.
 ################################################################################
 
-## Инициализация GUI. Без этого вызова Ren'Py не подключает современную
-## систему экранов (screen main_menu, screen preferences и т.д.) и
-## откатывается на старое compat-меню — из-за этого наше кастомное
-## меню с грозой раньше не показывалось.
 init offset = -2
+
 init python:
     gui.init(1920, 1080)
 
-## Размер шрифтов.
-define gui.text_size = 38
-define gui.name_text_size = 50
-define gui.interface_text_size = 40
-define gui.label_text_size = 46
-define gui.notify_text_size = 32
+
+################################################################################
+## КАСТОМНЫЙ ШРИФТ
+################################################################################
+
+## Основной шрифт игры — Celtes SP. Лежит в game/fonts/.
+define gui.text_font = "fonts/celtes.ttf"
+define gui.name_text_font = "fonts/celtes.ttf"
+define gui.interface_text_font = "fonts/celtes.ttf"
+define gui.button_text_font = "fonts/celtes.ttf"
+
+
+################################################################################
+## ЦВЕТА
+################################################################################
+
+define gui.accent_color = "#CE93D8"
+define gui.idle_color = "#cccccc"
+define gui.idle_small_color = "#aaaaaa"
+define gui.hover_color = "#CE93D8"
+define gui.selected_color = "#ffffff"
+define gui.insensitive_color = "#55555580"
+
+define gui.muted_color = "#5a3766"
+define gui.hover_muted_color = "#7a4f8c"
+
+define gui.text_color = "#ffffff"
+define gui.interface_text_color = "#ffffff"
+
+
+################################################################################
+## РАЗМЕРЫ ШРИФТОВ
+################################################################################
+
+define gui.text_size = 42
+define gui.name_text_size = 56
+define gui.interface_text_size = 38
+define gui.label_text_size = 48
+define gui.notify_text_size = 28
+define gui.title_text_size = 90
+
 define gui.button_text_size = 38
-define gui.choice_button_text_size = 40
+define gui.choice_button_text_size = 42
 
-## Основной шрифт. Стандартный DejaVuSans поддерживает кириллицу.
-define gui.text_font = "DejaVuSans.ttf"
-define gui.name_text_font = "DejaVuSans.ttf"
-define gui.interface_text_font = "DejaVuSans.ttf"
 
-## Цвета текста.
-define gui.text_color = '#ffffff'
-define gui.idle_color = '#aaaaaa'
-define gui.hover_color = '#4FC3F7'
-define gui.selected_color = '#ffffff'
-define gui.insensitive_color = '#555555'
+################################################################################
+## ОКНО ДИАЛОГА
+################################################################################
 
-## Основные цвета интерфейса (кнопок, рамок).
-define gui.accent_color = '#4FC3F7'
-define gui.selected_color = '#ffffff'
+define gui.textbox_height = 320
+define gui.textbox_yalign = 1.0
 
-## Размер окна диалога (доля экрана).
-define gui.textbox_height = 278
+define gui.name_xpos = 80
+define gui.name_ypos = 30
+define gui.name_xalign = 0.0
+
+define gui.namebox_width = None
+define gui.namebox_height = None
+define gui.namebox_borders = Borders(5, 5, 5, 5)
+define gui.namebox_tile = False
+
+define gui.dialogue_xpos = 80
+define gui.dialogue_ypos = 110
+define gui.dialogue_width = 1760
+define gui.dialogue_text_xalign = 0.0
+
+
+################################################################################
+## КНОПКИ
+################################################################################
+
+define gui.button_width = None
+define gui.button_height = None
+define gui.button_borders = Borders(4, 4, 4, 4)
+define gui.button_tile = False
+
+define gui.button_text_idle_color = gui.idle_color
+define gui.button_text_hover_color = gui.hover_color
+define gui.button_text_selected_color = gui.selected_color
+define gui.button_text_insensitive_color = gui.insensitive_color
+define gui.button_text_xalign = 0.0
+
+
+################################################################################
+## КНОПКИ ВЫБОРА (menu choices)
+################################################################################
+
+define gui.choice_button_width = 1400
+define gui.choice_button_height = None
+define gui.choice_button_tile = False
+define gui.choice_button_borders = Borders(100, 5, 100, 5)
+define gui.choice_button_text_xalign = 0.5
+define gui.choice_button_text_idle_color = "#cccccc"
+define gui.choice_button_text_hover_color = "#CE93D8"
+define gui.choice_button_text_insensitive_color = "#666666"
+
+
+################################################################################
+## ПОЛЗУНКИ И ПОЛОСКИ
+################################################################################
+
+define gui.bar_size = 38
+define gui.scrollbar_size = 14
+define gui.slider_size = 38
+
+define gui.bar_tile = False
+define gui.scrollbar_tile = False
+define gui.slider_tile = False
+
+define gui.bar_borders = Borders(4, 4, 4, 4)
+define gui.scrollbar_borders = Borders(4, 4, 4, 4)
+define gui.slider_borders = Borders(4, 4, 4, 4)
+
+define gui.vbar_borders = Borders(4, 4, 4, 4)
+define gui.vscrollbar_borders = Borders(4, 4, 4, 4)
+define gui.vslider_borders = Borders(4, 4, 4, 4)
+
+
+################################################################################
+## РАМКИ
+################################################################################
+
+define gui.frame_borders = Borders(4, 4, 4, 4)
+define gui.confirm_frame_borders = Borders(40, 40, 40, 40)
+define gui.skip_frame_borders = Borders(16, 5, 50, 5)
+define gui.notify_frame_borders = Borders(16, 5, 40, 5)
+define gui.frame_tile = False
+
+
+################################################################################
+## ПРОЧЕЕ
+################################################################################
+
+define gui.choice_spacing = 22
+define gui.navigation_spacing = 4
+define gui.pref_spacing = 10
+define gui.pref_button_spacing = 0
+define gui.page_spacing = 0
+define gui.slot_spacing = 10
+
+define gui.navigation_xpos = 40
+define gui.skip_ypos = 10
+define gui.notify_ypos = 45
+
+define gui.unscrollable = "hide"

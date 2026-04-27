@@ -141,44 +141,91 @@ screen preferences():
 
     tag menu
 
-    use game_menu(_("Настройки"), scroll="viewport"):
+    ## Полупрозрачный фон, чтобы текст и ползунки читались.
+    add "bg_main_menu"
+    add Solid("#000000cc")
 
-        vbox:
-            spacing 35
-            xfill True
+    ## Заголовок.
+    text _("НАСТРОЙКИ"):
+        xpos 80
+        ypos 60
+        size 80
+        bold True
+        color "#ffffff"
+        outlines [(3, "#000000", 0, 0)]
 
-            hbox:
-                box_wrap True
-                spacing 60
+    ## Основной блок настроек.
+    vbox:
+        xpos 80
+        ypos 200
+        spacing 40
 
-                vbox:
-                    style_prefix "radio"
-                    label _("Окно")
-                    textbutton _("Окно") action Preference("display", "window")
-                    textbutton _("Полный экран") action Preference("display", "fullscreen")
+        label _("Громкость"):
+            text_size 50
+            text_color "#ffffff"
+            text_bold True
 
-                vbox:
-                    style_prefix "check"
-                    label _("Текст")
-                    textbutton _("Пропуск непрочитанного") action Preference("skip", "toggle")
-                    textbutton _("Пропускать после выбора") action Preference("after choices", "toggle")
+        hbox:
+            spacing 30
+            text _("Музыка в меню"):
+                size 38
+                color "#ffffff"
+                xsize 420
+            bar value Preference("menu_music volume") xsize 700 ysize 40
 
-            null height 30
+        hbox:
+            spacing 30
+            text _("Музыка в игре"):
+                size 38
+                color "#ffffff"
+                xsize 420
+            bar value Preference("music volume") xsize 700 ysize 40
 
-            label _("Громкость") xalign 0.5
+        hbox:
+            spacing 30
+            text _("Звуковые эффекты"):
+                size 38
+                color "#ffffff"
+                xsize 420
+            bar value Preference("sound volume") xsize 700 ysize 40
 
-            grid 2 4:
-                spacing 25
-                xfill True
+        null height 25
 
-                label _("Музыка в меню")
-                bar value Preference("menu_music volume")
+        label _("Прочее"):
+            text_size 50
+            text_color "#ffffff"
+            text_bold True
 
-                label _("Музыка в игре")
-                bar value Preference("music volume")
+        hbox:
+            spacing 30
+            text _("Скорость текста"):
+                size 38
+                color "#ffffff"
+                xsize 420
+            bar value Preference("text speed") xsize 700 ysize 40
 
-                label _("Звуковые эффекты")
-                bar value Preference("sound volume")
+        hbox:
+            spacing 30
+            textbutton _("Окно"):
+                text_size 38
+                text_color "#ffffff"
+                text_hover_color "#CE93D8"
+                action Preference("display", "window")
+            textbutton _("Полный экран"):
+                text_size 38
+                text_color "#ffffff"
+                text_hover_color "#CE93D8"
+                action Preference("display", "fullscreen")
 
-                label _("Скорость текста")
-                bar value Preference("text speed")
+    ## Кнопка возврата в правом нижнем углу.
+    textbutton _("НАЗАД"):
+        xpos 1920 - 80
+        ypos 1080 - 80
+        xanchor 1.0
+        yanchor 1.0
+        text_size 48
+        text_color "#ffffff"
+        text_hover_color "#CE93D8"
+        text_outlines [(3, "#000000", 0, 0)]
+        text_bold True
+        action Return()

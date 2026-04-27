@@ -8,10 +8,13 @@
 ################################################################################
 
 ## Размер шрифтов.
-define gui.text_size = 33
-define gui.name_text_size = 45
-define gui.interface_text_size = 36
-define gui.label_text_size = 42
+define gui.text_size = 38
+define gui.name_text_size = 50
+define gui.interface_text_size = 40
+define gui.label_text_size = 46
+define gui.notify_text_size = 32
+define gui.button_text_size = 38
+define gui.choice_button_text_size = 40
 
 ## Основной шрифт. Стандартный DejaVuSans поддерживает кириллицу.
 define gui.text_font = "DejaVuSans.ttf"

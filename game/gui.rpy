@@ -15,11 +15,24 @@ init python:
 ## КАСТОМНЫЙ ШРИФТ
 ################################################################################
 
-## Основной шрифт игры — Celtes SP. Лежит в game/fonts/.
+## Основной шрифт игры — Celtes SP. Лежит в game/fonts/celtes.ttf.
 define gui.text_font = "fonts/celtes.ttf"
 define gui.name_text_font = "fonts/celtes.ttf"
 define gui.interface_text_font = "fonts/celtes.ttf"
 define gui.button_text_font = "fonts/celtes.ttf"
+
+## Принудительная замена дефолтного DejaVuSans на Celtes на уровне
+## Ren'Py-движка. Без этого ряд встроенных стилей упорно лез к
+## DejaVuSans, и шрифт в игре не менялся.
+init python:
+    config.font_replacement_map["DejaVuSans.ttf", False, False] = ("fonts/celtes.ttf", False, False)
+    config.font_replacement_map["DejaVuSans.ttf", False, True] = ("fonts/celtes.ttf", False, True)
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("fonts/celtes.ttf", True, False)
+    config.font_replacement_map["DejaVuSans.ttf", True, True] = ("fonts/celtes.ttf", True, True)
+
+## Применить шрифт ко всем стилям через style default.
+style default:
+    font "fonts/celtes.ttf"
 
 
 ################################################################################

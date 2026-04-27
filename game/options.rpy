@@ -72,6 +72,8 @@ init python:
     build.classify('game/images/**.png', 'all')
     build.classify('game/images/**.jpg', 'all')
     build.classify('game/images/**.webp', 'all')
+    build.classify('game/fonts/**.ttf', 'all')
+    build.classify('game/fonts/**.otf', 'all')
 
     ## Не включать исходники в архив (только скомпилированный код).
     build.include_old_themes = False

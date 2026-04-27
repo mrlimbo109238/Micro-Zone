@@ -15,24 +15,24 @@ init python:
 ## КАСТОМНЫЙ ШРИФТ
 ################################################################################
 
-## Основной шрифт игры — Celtes SP. Лежит в game/fonts/celtes.ttf.
-define gui.text_font = "fonts/celtes.ttf"
-define gui.name_text_font = "fonts/celtes.ttf"
-define gui.interface_text_font = "fonts/celtes.ttf"
-define gui.button_text_font = "fonts/celtes.ttf"
+## Основной шрифт игры — Adventure Indiana. Лежит в game/fonts/adventure.ttf.
+define gui.text_font = "fonts/adventure.ttf"
+define gui.name_text_font = "fonts/adventure.ttf"
+define gui.interface_text_font = "fonts/adventure.ttf"
+define gui.button_text_font = "fonts/adventure.ttf"
 
-## Принудительная замена дефолтного DejaVuSans на Celtes на уровне
+## Принудительная замена дефолтного DejaVuSans на Adventure на уровне
 ## Ren'Py-движка. Без этого ряд встроенных стилей упорно лез к
 ## DejaVuSans, и шрифт в игре не менялся.
 init python:
-    config.font_replacement_map["DejaVuSans.ttf", False, False] = ("fonts/celtes.ttf", False, False)
-    config.font_replacement_map["DejaVuSans.ttf", False, True] = ("fonts/celtes.ttf", False, True)
-    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("fonts/celtes.ttf", True, False)
-    config.font_replacement_map["DejaVuSans.ttf", True, True] = ("fonts/celtes.ttf", True, True)
+    config.font_replacement_map["DejaVuSans.ttf", False, False] = ("fonts/adventure.ttf", False, False)
+    config.font_replacement_map["DejaVuSans.ttf", False, True] = ("fonts/adventure.ttf", False, True)
+    config.font_replacement_map["DejaVuSans.ttf", True, False] = ("fonts/adventure.ttf", True, False)
+    config.font_replacement_map["DejaVuSans.ttf", True, True] = ("fonts/adventure.ttf", True, True)
 
 ## Применить шрифт ко всем стилям через style default.
 style default:
-    font "fonts/celtes.ttf"
+    font "fonts/adventure.ttf"
 
 
 ################################################################################

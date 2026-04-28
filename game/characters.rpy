@@ -29,6 +29,9 @@ define a_evil = Character(
 ## Валентин — сосед, рассказывающий мрачную историю дома.
 define v = Character("Валентин", color="#BCAAA4")
 
+## Иисус Христос — появляется в главе 3.
+define j = Character("Иисус", color="#FFD54F")
+
 ## Безымянная подача — описания, атмосфера, действия.
 ## Используется как:  "просто текст в кавычках"
 define narrator = Character(None, what_italic=True)

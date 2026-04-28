@@ -1,12 +1,11 @@
 ################################################################################
 ## Micro Zone — Кастомные экраны интерфейса
 ################################################################################
-## Главное меню, диалоговое окно, настройки.
+## Главное меню, диалоговое окно, настройки, вступительные экраны.
 ################################################################################
 
 
 ## Объявление картинки меню — масштабируем под игру 1920x1080.
-## Исходник 5120x3413, без масштаба Ren'Py показывал бы только кусок.
 image bg_main_menu = Transform("bg_menu_calm.jpg", size=(1920, 1080))
 
 
@@ -91,6 +90,8 @@ screen main_menu():
 ## gui/textbox.png (которого у нас нет), поэтому без override текст
 ## улетал в самый верх экрана без подложки. Мы рисуем своё окно
 ## с полупрозрачным фоном внизу экрана.
+##
+## Окно компактное (290 px) — Limbo попросил «чуть ниже».
 
 screen say(who, what):
 
@@ -98,15 +99,15 @@ screen say(who, what):
 
     window id "window":
         background Solid("#000000c8")
-        ysize 360
+        ysize 290
         yalign 1.0
         xfill True
         xpadding 90
-        ypadding 35
+        ypadding 25
 
         if who is not None:
             text who id "who":
-                size 60
+                size 56
                 color "#CE93D8"
                 bold True
                 outlines [(3, "#000000", 0, 0)]
@@ -114,25 +115,19 @@ screen say(who, what):
                 ypos 0
 
         text what id "what":
-            size 44
+            size 42
             color "#ffffff"
             outlines [(3, "#000000", 0, 0)]
             xpos 0
-            ypos 80
+            ypos 70
             xmaximum 1740
             line_leading 4
             line_spacing 6
 
-    ## Add the quick menu, like Ren'Py default.
-    if not renpy.variant("small"):
-        add SideImage() xalign 0.0 yalign 1.0
-
 
 ################################################################################
-## QUICK MENU (snap save / skip / prefs)
+## QUICK MENU (rollback / skip / save / prefs)
 ################################################################################
-## Маленькая панелька внизу экрана. Дефолтный quick_menu от Ren'Py
-## использует picture-кнопки которых у нас нет, поэтому делаем свою.
 
 screen quick_menu():
 
@@ -142,7 +137,7 @@ screen quick_menu():
 
         hbox:
             xalign 0.5
-            yalign 0.98
+            yalign 0.985
             spacing 18
 
             textbutton _("Назад") action Rollback() text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
@@ -161,7 +156,89 @@ default quick_menu = True
 
 
 ################################################################################
-## НАСТРОЙКИ (с тремя ползунками громкости)
+## ВСТУПИТЕЛЬНЫЕ ЭКРАНЫ (соо-креатор / дисклеймер / привет от Лимбы)
+################################################################################
+## Каждый экран — крупный центрированный текст на чёрном фоне.
+## Тап в любом месте экрана продвигает к следующему экрану.
+
+screen intro_message(message):
+
+    modal True
+
+    add Solid("#000000")
+
+    text message:
+        xalign 0.5
+        yalign 0.5
+        size 50
+        color "#ffffff"
+        outlines [(3, "#000000", 0, 0)]
+        text_align 0.5
+        layout "subtitle"
+        xmaximum 1500
+
+    text _("(нажмите, чтобы продолжить)"):
+        xalign 0.5
+        yalign 0.96
+        size 24
+        color "#888888"
+        italic True
+
+    ## Любой клик / тап / Enter / Space → дальше.
+    key "K_RETURN" action Return()
+    key "K_SPACE" action Return()
+    key "K_KP_ENTER" action Return()
+    key "mouseup_1" action Return()
+
+
+screen intro_age_question():
+
+    modal True
+
+    add Solid("#000000")
+
+    vbox:
+        xalign 0.5
+        yalign 0.5
+        spacing 30
+
+        text _("Сколько тебе лет?"):
+            xalign 0.5
+            size 64
+            color "#ffffff"
+            outlines [(3, "#000000", 0, 0)]
+            bold True
+
+        text _("«Простите, мне это очень нужно, чтобы всё запрещённое стало разрушенным»"):
+            xalign 0.5
+            size 28
+            color "#aaaaaa"
+            italic True
+            xmaximum 1500
+            text_align 0.5
+            layout "subtitle"
+
+        null height 60
+
+        textbutton _("Мне 16 или больше"):
+            xalign 0.5
+            text_size 48
+            text_color "#ffffff"
+            text_hover_color "#CE93D8"
+            text_outlines [(3, "#000000", 0, 0)]
+            action Return(False)
+
+        textbutton _("Мне меньше 16"):
+            xalign 0.5
+            text_size 48
+            text_color "#ffffff"
+            text_hover_color "#CE93D8"
+            text_outlines [(3, "#000000", 0, 0)]
+            action Return(True)
+
+
+################################################################################
+## НАСТРОЙКИ
 ################################################################################
 
 screen preferences():
@@ -181,11 +258,11 @@ screen preferences():
 
     vbox:
         xpos 80
-        ypos 220
-        spacing 28
+        ypos 200
+        spacing 24
 
         text _("ГРОМКОСТЬ"):
-            size 60
+            size 56
             color "#CE93D8"
             bold True
             outlines [(2, "#000000", 0, 0)]
@@ -193,14 +270,14 @@ screen preferences():
         hbox:
             spacing 30
             text _("Музыка в меню"):
-                size 42
+                size 38
                 color "#ffffff"
                 xsize 480
                 yalign 0.5
                 outlines [(2, "#000000", 0, 0)]
             bar value Preference("menu_music volume"):
                 xsize 900
-                ysize 50
+                ysize 44
                 yalign 0.5
                 left_bar Solid("#CE93D8")
                 right_bar Solid("#444444")
@@ -209,14 +286,14 @@ screen preferences():
         hbox:
             spacing 30
             text _("Музыка в игре"):
-                size 42
+                size 38
                 color "#ffffff"
                 xsize 480
                 yalign 0.5
                 outlines [(2, "#000000", 0, 0)]
             bar value Preference("music volume"):
                 xsize 900
-                ysize 50
+                ysize 44
                 yalign 0.5
                 left_bar Solid("#CE93D8")
                 right_bar Solid("#444444")
@@ -225,23 +302,23 @@ screen preferences():
         hbox:
             spacing 30
             text _("Звуковые эффекты"):
-                size 42
+                size 38
                 color "#ffffff"
                 xsize 480
                 yalign 0.5
                 outlines [(2, "#000000", 0, 0)]
             bar value Preference("sound volume"):
                 xsize 900
-                ysize 50
+                ysize 44
                 yalign 0.5
                 left_bar Solid("#CE93D8")
                 right_bar Solid("#444444")
                 thumb None
 
-        null height 30
+        null height 18
 
         text _("ПРОЧЕЕ"):
-            size 60
+            size 56
             color "#CE93D8"
             bold True
             outlines [(2, "#000000", 0, 0)]
@@ -249,18 +326,54 @@ screen preferences():
         hbox:
             spacing 30
             text _("Скорость текста"):
-                size 42
+                size 38
                 color "#ffffff"
                 xsize 480
                 yalign 0.5
                 outlines [(2, "#000000", 0, 0)]
             bar value Preference("text speed"):
                 xsize 900
-                ysize 50
+                ysize 44
                 yalign 0.5
                 left_bar Solid("#CE93D8")
                 right_bar Solid("#444444")
                 thumb None
+
+        ## Тумблер вступительных экранов.
+        hbox:
+            spacing 30
+            text _("Показывать вступление"):
+                size 38
+                color "#ffffff"
+                xsize 480
+                yalign 0.5
+                outlines [(2, "#000000", 0, 0)]
+            textbutton (_("ВКЛ") if persistent.show_intro else _("ВЫКЛ")):
+                yalign 0.5
+                text_size 38
+                text_color ("#CE93D8" if persistent.show_intro else "#888888")
+                text_hover_color "#ffffff"
+                text_outlines [(2, "#000000", 0, 0)]
+                text_bold True
+                action ToggleField(persistent, "show_intro")
+
+        ## Тумблер цензуры матов.
+        hbox:
+            spacing 30
+            text _("Цензура матов (для <16)"):
+                size 38
+                color "#ffffff"
+                xsize 480
+                yalign 0.5
+                outlines [(2, "#000000", 0, 0)]
+            textbutton (_("ВКЛ") if persistent.profanity_censor else _("ВЫКЛ")):
+                yalign 0.5
+                text_size 38
+                text_color ("#CE93D8" if persistent.profanity_censor else "#888888")
+                text_hover_color "#ffffff"
+                text_outlines [(2, "#000000", 0, 0)]
+                text_bold True
+                action ToggleField(persistent, "profanity_censor")
 
     textbutton _("НАЗАД"):
         xpos 1920 - 80
@@ -276,29 +389,29 @@ screen preferences():
 
 
 ################################################################################
-## ОБЩИЕ СТИЛИ ПОЛЗУНКОВ (на случай, если где-то ещё используются)
+## ОБЩИЕ СТИЛИ ПОЛЗУНКОВ
 ################################################################################
 
 style bar:
-    ysize 50
+    ysize 44
     left_bar Solid("#CE93D8")
     right_bar Solid("#444444")
     thumb None
 
 style slider:
-    ysize 50
+    ysize 44
     left_bar Solid("#CE93D8")
     right_bar Solid("#444444")
     thumb None
 
 style vbar:
-    xsize 50
+    xsize 44
     top_bar Solid("#CE93D8")
     bottom_bar Solid("#444444")
     thumb None
 
 style vslider:
-    xsize 50
+    xsize 44
     top_bar Solid("#CE93D8")
     bottom_bar Solid("#444444")
     thumb None

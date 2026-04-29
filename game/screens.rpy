@@ -91,9 +91,10 @@ screen main_menu():
 ## улетал в самый верх экрана без подложки. Мы рисуем своё окно
 ## с полупрозрачным фоном внизу экрана.
 ##
-## Окно укорочено до 230 px и притянуто к самому низу — по просьбе Limbo
-## «сделай чуть ниже». Поскольку yalign 1.0, уменьшение ysize двигает
-## верхний край плашки вниз ровно на ту же дельту (50 px).
+## Плашка прижата к нижнему краю (yalign 1.0) и автоматически растёт
+## вверх под длину текста — длинные описания и стихи больше не вылезают
+## за экран. ymaximum 600 ограничивает её половиной экрана, чтобы при
+## совсем огромных абзацах не закрывала всю картинку.
 
 screen say(who, what):
 
@@ -101,35 +102,38 @@ screen say(who, what):
 
     window id "window":
         background Solid("#000000c8")
-        ysize 230
         yalign 1.0
         xfill True
         xpadding 90
-        ypadding 22
+        ypadding 24
+        ymaximum 600
 
-        if who is not None:
-            text who id "who":
-                size 52
-                color "#CE93D8"
-                bold True
+        vbox:
+            spacing 10
+
+            if who is not None:
+                text who id "who":
+                    size 48
+                    color "#CE93D8"
+                    bold True
+                    outlines [(3, "#000000", 0, 0)]
+
+            text what id "what":
+                size 36
+                color "#ffffff"
                 outlines [(3, "#000000", 0, 0)]
-                xpos 0
-                ypos 0
-
-        text what id "what":
-            size 40
-            color "#ffffff"
-            outlines [(3, "#000000", 0, 0)]
-            xpos 0
-            ypos 64
-            xmaximum 1740
-            line_leading 4
-            line_spacing 4
+                xmaximum 1740
+                line_leading 4
+                line_spacing 6
 
 
 ################################################################################
 ## QUICK MENU (rollback / skip / save / prefs)
 ################################################################################
+
+## Quick-menu теперь сидит сверху экрана — раньше он стоял по нижнему
+## краю и пересекался с длинными репликами / описаниями. Сверху картинку
+## он почти не закрывает, а до плашки диалога никогда не дотягивается.
 
 screen quick_menu():
 
@@ -137,18 +141,24 @@ screen quick_menu():
 
     if quick_menu:
 
-        hbox:
+        ## Полупрозрачная подложка, чтобы кнопки читались на любых фонах.
+        frame:
             xalign 0.5
-            yalign 0.985
-            spacing 18
+            yalign 0.0
+            background Solid("#000000a0")
+            xpadding 26
+            ypadding 8
 
-            textbutton _("Назад") action Rollback() text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("История") action ShowMenu("history") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("Пропуск") action Skip() alternate Skip(fast=True, confirm=True) text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("Авто") action Preference("auto-forward", "toggle") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("Сохранить") action ShowMenu("save") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("Загрузить") action ShowMenu("load") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
-            textbutton _("Настройки") action ShowMenu("preferences") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+            hbox:
+                spacing 18
+
+                textbutton _("Назад") action Rollback() text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("История") action ShowMenu("history") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("Пропуск") action Skip() alternate Skip(fast=True, confirm=True) text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("Авто") action Preference("auto-forward", "toggle") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("Сохранить") action ShowMenu("save") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("Загрузить") action ShowMenu("load") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
+                textbutton _("Настройки") action ShowMenu("preferences") text_size 26 text_color "#ffffffcc" text_hover_color "#CE93D8"
 
 
 init python:

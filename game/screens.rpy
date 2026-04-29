@@ -91,7 +91,9 @@ screen main_menu():
 ## улетал в самый верх экрана без подложки. Мы рисуем своё окно
 ## с полупрозрачным фоном внизу экрана.
 ##
-## Окно компактное (290 px) — Limbo попросил «чуть ниже».
+## Окно укорочено до 230 px и притянуто к самому низу — по просьбе Limbo
+## «сделай чуть ниже». Поскольку yalign 1.0, уменьшение ysize двигает
+## верхний край плашки вниз ровно на ту же дельту (50 px).
 
 screen say(who, what):
 
@@ -99,15 +101,15 @@ screen say(who, what):
 
     window id "window":
         background Solid("#000000c8")
-        ysize 290
+        ysize 230
         yalign 1.0
         xfill True
         xpadding 90
-        ypadding 25
+        ypadding 22
 
         if who is not None:
             text who id "who":
-                size 56
+                size 52
                 color "#CE93D8"
                 bold True
                 outlines [(3, "#000000", 0, 0)]
@@ -115,14 +117,14 @@ screen say(who, what):
                 ypos 0
 
         text what id "what":
-            size 42
+            size 40
             color "#ffffff"
             outlines [(3, "#000000", 0, 0)]
             xpos 0
-            ypos 70
+            ypos 64
             xmaximum 1740
             line_leading 4
-            line_spacing 6
+            line_spacing 4
 
 
 ################################################################################

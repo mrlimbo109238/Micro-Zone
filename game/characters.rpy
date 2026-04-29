@@ -30,11 +30,29 @@ define a_evil = Character(
 define v = Character("Валентин", color="#BCAAA4")
 
 ## Иисус Христос — появляется в главе 3.
-define j = Character("Иисус", color="#FFD54F")
+define j = Character("Иисус Христос", color="#FFD54F")
+
+## Зловещий «Голос» отвечает Саше во время ритуала в главе 3.
+## Стиль — крупный кроваво-красный шрифт, как у "тёмной" Ани.
+define voice = Character(
+    "Голос",
+    color="#5a0000",
+    what_color="#ff3a3a",
+    what_size=52,
+    what_bold=True,
+    what_italic=True,
+    what_outlines=[(2, "#000000", 0, 0)]
+)
+
+## Бездомная кошка из 7-й сцены главы 3 (до момента, когда Саша даёт ей имя).
+define cat = Character("Кошка", color="#FFB74D")
+
+## Тот же котёнок после имени — Тихон.
+define t = Character("Тихон", color="#FFB74D")
 
 ## Безымянная подача — описания, атмосфера, действия.
 ## Используется как:  "просто текст в кавычках"
 define narrator = Character(None, what_italic=True)
 
-## Внутренние мысли героя (на случай если захотим стилистически выделить).
+## Внутренние мысли героя — серый курсив, без имени.
 define thoughts = Character(None, what_italic=True, what_color="#B0BEC5")

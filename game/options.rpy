@@ -44,8 +44,29 @@ define config.default_voice_volume = 1.0
 ## Отдельный канал для музыки в главном меню. Это позволяет иметь
 ## независимый ползунок "громкость музыки в меню" в настройках,
 ## независимо от громкости музыки внутри игры.
+##
+## Также регистрируем отдельные каналы для звуковых эффектов, чтобы
+## несколько ambient-звуков (двигатель + печка + ветер + ...) могли
+## звучать одновременно. По умолчанию у Ren'Py всего один `sound`
+## канал, и новый звук просто перебивал предыдущий. Все эти каналы
+## висят на миксере `sfx`, поэтому ползунок «Звуковые эффекты» в
+## настройках управляет всеми ими сразу.
 init python:
     renpy.music.register_channel("menu_music", mixer="menu_music", loop=True)
+
+    # Зацикленные ambient-каналы (двигатель, печка, ветер, скрип пола, сердце).
+    renpy.music.register_channel("amb_engine",    mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_stove",     mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_wind",      mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_floor",     mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_heartbeat", mixer="sfx", loop=True)
+
+    # Однократные SFX (навигатор, дверца машины, удар, крик). loop=False —
+    # звук играет один раз и сам останавливается, когда файл кончится.
+    renpy.music.register_channel("sfx_navigator", mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_door",      mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_noise",     mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_scream",    mixer="sfx", loop=False)
 
 ################################################################################
 ## Автосохранение и переходы

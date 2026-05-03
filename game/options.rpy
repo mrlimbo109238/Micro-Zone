@@ -54,19 +54,23 @@ define config.default_voice_volume = 1.0
 init python:
     renpy.music.register_channel("menu_music", mixer="menu_music", loop=True)
 
-    # Зацикленные ambient-каналы (двигатель, печка, ветер, скрип пола, сердце).
+    # Зацикленные ambient-каналы (двигатель, печка, ветер, скрип пола,
+    # сердце, уличный фонарь). Все на миксере sfx.
     renpy.music.register_channel("amb_engine",    mixer="sfx", loop=True)
     renpy.music.register_channel("amb_stove",     mixer="sfx", loop=True)
     renpy.music.register_channel("amb_wind",      mixer="sfx", loop=True)
     renpy.music.register_channel("amb_floor",     mixer="sfx", loop=True)
     renpy.music.register_channel("amb_heartbeat", mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_streetlamp", mixer="sfx", loop=True)
 
-    # Однократные SFX (навигатор, дверца машины, удар, крик). loop=False —
-    # звук играет один раз и сам останавливается, когда файл кончится.
+    # Однократные SFX. loop=False — звук играет один раз и сам
+    # останавливается, когда файл кончится.
     renpy.music.register_channel("sfx_navigator", mixer="sfx", loop=False)
     renpy.music.register_channel("sfx_door",      mixer="sfx", loop=False)
     renpy.music.register_channel("sfx_noise",     mixer="sfx", loop=False)
     renpy.music.register_channel("sfx_scream",    mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_surprise",  mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_whisper",   mixer="sfx", loop=False)
 
 ################################################################################
 ## Автосохранение и переходы

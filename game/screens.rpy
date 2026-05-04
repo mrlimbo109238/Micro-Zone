@@ -8,6 +8,9 @@
 ## Объявление картинки меню — масштабируем под игру 1920x1080.
 image bg_main_menu = Transform("bg_menu_calm.jpg", size=(1920, 1080))
 
+## Логотип, который показываем на сплеш-экране при запуске.
+image splash_logo = "images/splash_logo.jpg"
+
 
 ################################################################################
 ## ГЛАВНОЕ МЕНЮ
@@ -34,6 +37,41 @@ screen main_menu():
         bold True
         color "#ffffff"
         outlines [(4, "#000000", 0, 0)]
+
+    ## Соцсети-кнопки (Телеграм + поддержка автору) в правом верхнем углу.
+    ## Нажатие открывает экран с подтверждением «вы уверены, что хотите
+    ## перейти?» — иначе случайный тап увёл бы игрока в браузер.
+    hbox:
+        xanchor 1.0
+        xpos 1920 - 50
+        ypos 70
+        spacing 20
+
+        textbutton _("[TG]"):
+            text_size 44
+            text_color "#5dadff"
+            text_hover_color "#ff2f2f"
+            text_outlines [(2, "#000000", 0, 0)]
+            text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
+            action Show("confirm_external_link",
+                        url="https://t.me/+Ju8irSUWfHtiM2Zi",
+                        title=_("Перейти в Telegram-канал автора?"),
+                        subtitle=_("Откроется браузер / приложение Telegram"))
+
+        textbutton _("[♥ Поддержать]"):
+            text_size 44
+            text_color "#ff7a7a"
+            text_hover_color "#ff2f2f"
+            text_outlines [(2, "#000000", 0, 0)]
+            text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
+            action Show("confirm_external_link",
+                        url="https://dalink.to/wreezik900",
+                        title=_("Поддержать автора?"),
+                        subtitle=_("Откроется страница с вариантами доната"))
 
     vbox:
         xpos 70
@@ -98,6 +136,85 @@ screen main_menu():
 
 
 ################################################################################
+## ПОДТВЕРЖДЕНИЕ ПЕРЕХОДА ПО ВНЕШНЕЙ ССЫЛКЕ
+################################################################################
+## Показывается, когда игрок тапает по [TG] или [♥ Поддержать] в меню.
+## Спрашиваем «вы уверены», чтобы случайный тап не уводил человека в
+## браузер / Telegram. «ДА» — открывает url через OpenURL, «НЕТ» —
+## просто прячет окно.
+
+screen confirm_external_link(url, title, subtitle):
+
+    modal True
+    zorder 300
+
+    add Solid("#000000d8")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1aee")
+        xpadding 60
+        ypadding 50
+        xsize 1100
+
+        vbox:
+            spacing 22
+
+            text title:
+                xalign 0.5
+                size 48
+                color "#ffffff"
+                outlines [(2, "#000000", 0, 0)]
+                text_align 0.5
+                layout "subtitle"
+
+            text subtitle:
+                xalign 0.5
+                size 30
+                color "#bbbbbb"
+                italic True
+                text_align 0.5
+                layout "subtitle"
+
+            null height 14
+
+            text url:
+                xalign 0.5
+                size 24
+                color "#888888"
+                text_align 0.5
+                layout "subtitle"
+
+            null height 16
+
+            hbox:
+                xalign 0.5
+                spacing 60
+
+                textbutton _("ДА"):
+                    text_size 56
+                    text_color "#ffffff"
+                    text_hover_color "#ff2f2f"
+                    text_outlines [(2, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action [
+                        Hide("confirm_external_link"),
+                        OpenURL(url),
+                    ]
+
+                textbutton _("НЕТ"):
+                    text_size 56
+                    text_color "#dddddd"
+                    text_hover_color "#ff2f2f"
+                    text_outlines [(2, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action Hide("confirm_external_link")
+
+
+################################################################################
 ## ДИАЛОГОВОЕ ОКНО (screen say)
 ################################################################################
 ## Переопределяем стандартный say-screen. По умолчанию он использует
@@ -139,6 +256,99 @@ screen say(who, what):
                 xmaximum 1740
                 line_leading 4
                 line_spacing 6
+
+
+################################################################################
+## ПЛАШКА ГОЛОСОВОЙ ОЗВУЧКИ (TTS / Self-Voicing)
+################################################################################
+## Limbo попросил «плашку с сообщением, которая по голосу активируется».
+## Используем встроенную self-voicing-фичу Ren'Py — она через системный
+## TTS Android (или espeak на Linux) озвучивает все реплики, описания и
+## всю речь от лица персонажей.
+##
+## Плашка живёт в верхнем левом углу прямо над quick_menu. Когда голос
+## выключен — внутри иконка-микрофон с диагональной полосой, фон серый.
+## Когда включён — иконка пульсирует красным, сама плашка тоже краснеет.
+## Текст внутри обычной (не жирной) толщины, чтобы хорошо читался.
+
+screen voice_panel():
+
+    zorder 90
+
+    if not main_menu:
+
+        ## Включён ли голос — берём из стандартных настроек preferences
+        ## (Ren'Py хранит self_voicing=True/False/"clipboard"/"debug").
+        $ _voice_on = bool(_preferences.self_voicing)
+
+        frame:
+            xalign 0.0
+            yalign 0.0
+            xoffset 26
+            yoffset 84
+            background Solid("#0d0d0deb" if not _voice_on else "#1a0606ee")
+            xpadding 16
+            ypadding 12
+
+            hbox:
+                spacing 12
+
+                ## Левая часть — индикатор-«микрофон». При включённом
+                ## голосе анимируется красная пульсация (alpha 0.4↔1.0).
+                if _voice_on:
+                    text "{font=fonts/adventure.ttf}●{/font}":
+                        size 32
+                        color "#ff2f2f"
+                        outlines [(2, "#000000", 0, 0)]
+                        yalign 0.5
+                        at _voice_pulse
+                else:
+                    text "{font=fonts/adventure.ttf}○{/font}":
+                        size 32
+                        color "#666666"
+                        outlines [(2, "#000000", 0, 0)]
+                        yalign 0.5
+
+                vbox:
+                    spacing 0
+
+                    ## Заголовок плашки.
+                    text _("ОЗВУЧКА"):
+                        size 22
+                        color ("#ffffff" if _voice_on else "#aaaaaa")
+                        outlines [(1, "#000000", 0, 0)]
+
+                    ## Маленький подзаголовок-подсказка.
+                    text (_("Голос диктора активен") if _voice_on
+                          else _("Тап — включить чтение вслух")):
+                        size 16
+                        color ("#ff7a7a" if _voice_on else "#666666")
+                        italic True
+
+                ## Тумблер ВКЛ / ВЫКЛ.
+                textbutton (_("ВКЛ") if _voice_on else _("ВЫКЛ")):
+                    yalign 0.5
+                    text_size 22
+                    text_color ("#ff2f2f" if _voice_on else "#888888")
+                    text_hover_color "#ffffff"
+                    text_outlines [(1, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action Preference("self voicing", "toggle")
+
+
+## Анимация пульсации индикатора при активной озвучке. Меняем alpha
+## плавно вверх-вниз, чтобы получить эффект «говорит».
+transform _voice_pulse:
+    alpha 0.4
+    block:
+        ease 0.6 alpha 1.0
+        ease 0.6 alpha 0.4
+        repeat
+
+
+init python:
+    config.overlay_screens.append("voice_panel")
 
 
 ################################################################################

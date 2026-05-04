@@ -104,6 +104,16 @@ screen main_menu():
             hover_sound UIHOVER_SOUND
             action ShowMenu("preferences")
 
+        textbutton _("СОО-КРЕАТОРЫ"):
+            text_size 56
+            text_color "#dddddd"
+            text_hover_color "#ff2f2f"
+            text_outlines [(3, "#000000", 0, 0)]
+            text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
+            action Show("co_creators")
+
         textbutton _("ПРОДОЛЖИТЬ"):
             text_size 56
             text_color "#dddddd"
@@ -259,96 +269,261 @@ screen say(who, what):
 
 
 ################################################################################
-## ПЛАШКА ГОЛОСОВОЙ ОЗВУЧКИ (TTS / Self-Voicing)
+## ОКНО «СОО-КРЕАТОРЫ» (с паролями)
 ################################################################################
-## Limbo попросил «плашку с сообщением, которая по голосу активируется».
-## Используем встроенную self-voicing-фичу Ren'Py — она через системный
-## TTS Android (или espeak на Linux) озвучивает все реплики, описания и
-## всю речь от лица персонажей.
+## Limbo попросил окно с тремя СОО-креаторами (Саша, Алина, IdenFree).
+## К каждому привязан свой пароль; ввёл правильный — получаешь скрытое
+## личное сообщение от автора, нет — «Неверный пароль» и можно вернуться
+## к выбору. Окно открывается с главного меню по кнопке «СОО-КРЕАТОРЫ».
 ##
-## Плашка живёт в верхнем левом углу прямо над quick_menu. Когда голос
-## выключен — внутри иконка-микрофон с диагональной полосой, фон серый.
-## Когда включён — иконка пульсирует красным, сама плашка тоже краснеет.
-## Текст внутри обычной (не жирной) толщины, чтобы хорошо читался.
-
-screen voice_panel():
-
-    zorder 90
-
-    if not main_menu:
-
-        ## Включён ли голос — берём из стандартных настроек preferences
-        ## (Ren'Py хранит self_voicing=True/False/"clipboard"/"debug").
-        $ _voice_on = bool(_preferences.self_voicing)
-
-        frame:
-            xalign 0.0
-            yalign 0.0
-            xoffset 26
-            yoffset 84
-            background Solid("#0d0d0deb" if not _voice_on else "#1a0606ee")
-            xpadding 16
-            ypadding 12
-
-            hbox:
-                spacing 12
-
-                ## Левая часть — индикатор-«микрофон». При включённом
-                ## голосе анимируется красная пульсация (alpha 0.4↔1.0).
-                if _voice_on:
-                    text "{font=fonts/adventure.ttf}●{/font}":
-                        size 32
-                        color "#ff2f2f"
-                        outlines [(2, "#000000", 0, 0)]
-                        yalign 0.5
-                        at _voice_pulse
-                else:
-                    text "{font=fonts/adventure.ttf}○{/font}":
-                        size 32
-                        color "#666666"
-                        outlines [(2, "#000000", 0, 0)]
-                        yalign 0.5
-
-                vbox:
-                    spacing 0
-
-                    ## Заголовок плашки.
-                    text _("ОЗВУЧКА"):
-                        size 22
-                        color ("#ffffff" if _voice_on else "#aaaaaa")
-                        outlines [(1, "#000000", 0, 0)]
-
-                    ## Маленький подзаголовок-подсказка.
-                    text (_("Голос диктора активен") if _voice_on
-                          else _("Тап — включить чтение вслух")):
-                        size 16
-                        color ("#ff7a7a" if _voice_on else "#666666")
-                        italic True
-
-                ## Тумблер ВКЛ / ВЫКЛ.
-                textbutton (_("ВКЛ") if _voice_on else _("ВЫКЛ")):
-                    yalign 0.5
-                    text_size 22
-                    text_color ("#ff2f2f" if _voice_on else "#888888")
-                    text_hover_color "#ffffff"
-                    text_outlines [(1, "#000000", 0, 0)]
-                    text_bold True
-                    activate_sound UICLICK_SOUND
-                    action Preference("self voicing", "toggle")
-
-
-## Анимация пульсации индикатора при активной озвучке. Меняем alpha
-## плавно вверх-вниз, чтобы получить эффект «говорит».
-transform _voice_pulse:
-    alpha 0.4
-    block:
-        ease 0.6 alpha 1.0
-        ease 0.6 alpha 0.4
-        repeat
-
+## Пароли:
+##   Саша     — MaybeBaybe1
+##   Алина    — TilkaPlay1
+##   IdenFree — Fhaf1
 
 init python:
-    config.overlay_screens.append("voice_panel")
+    ## Текст «личных» сообщений показываем только после ввода пароля.
+    ## Хранятся в Python-словаре, чтобы из screens их легко доставать.
+    CO_CREATORS = [
+        {
+            "name":     "Саша",
+            "password": "MaybeBaybe1",
+            "color":    "#ffd166",
+            "message":  _(
+                "Саша, спасибо тебе огромное за всё, что ты делаешь. "
+                "Без тебя этой игры бы просто не было — твой вклад в "
+                "сюжет, в персонажей и в саму атмосферу Micro Zone "
+                "невозможно переоценить.\n\n"
+                "Эта новелла во многом — наша общая история. "
+                "С уважением, Limbo."
+            ),
+        },
+        {
+            "name":     "Алина",
+            "password": "TilkaPlay1",
+            "color":    "#f08bb1",
+            "message":  _(
+                "Алина, ты — один из самых тёплых и искренних людей "
+                "в моей жизни. Твоя поддержка и вера в проект помогали "
+                "мне не сдаться даже в моменты, когда хотелось всё "
+                "бросить.\n\n"
+                "Спасибо тебе за идеи, за смех и за то, что ты есть. "
+                "С любовью, Limbo."
+            ),
+        },
+        {
+            "name":     "IdenFree",
+            "password": "Fhaf1",
+            "color":    "#7ee0ff",
+            "message":  _(
+                "IdenFree, ты — мой главный технический ангел-хранитель. "
+                "Без твоих советов по коду, тестов на разных устройствах "
+                "и часов разборов багов, Micro Zone никогда бы не "
+                "запустилась так гладко.\n\n"
+                "Огромное спасибо за всё. Limbo."
+            ),
+        },
+    ]
+
+    def _check_co_creator_password(creator, entered):
+        """Проверка пароля СОО-креатора. Если совпадает — показываем
+        окно с личным сообщением; если нет — крутим уведомление."""
+        if (entered or "").strip() == creator["password"]:
+            renpy.hide_screen("co_creator_password")
+            renpy.show_screen("co_creator_message", creator=creator)
+        else:
+            renpy.notify(_("Неверный пароль"))
+
+
+screen co_creators():
+
+    modal True
+    zorder 200
+
+    add Solid("#000000d8")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1aee")
+        xpadding 70
+        ypadding 50
+        xsize 1100
+
+        vbox:
+            spacing 26
+
+            text _("СОО-КРЕАТОРЫ"):
+                xalign 0.5
+                size 64
+                color "#ffffff"
+                outlines [(3, "#000000", 0, 0)]
+                text_align 0.5
+
+            text _("Если у тебя есть личный пароль — выбери своё имя\nи введи его, чтобы получить сообщение от автора."):
+                xalign 0.5
+                size 26
+                color "#bbbbbb"
+                italic True
+                text_align 0.5
+                layout "subtitle"
+
+            null height 14
+
+            ## Кнопки трёх креаторов.
+            for creator in CO_CREATORS:
+                textbutton creator["name"]:
+                    xalign 0.5
+                    text_size 56
+                    text_color creator["color"]
+                    text_hover_color "#ff2f2f"
+                    text_outlines [(2, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action [
+                        Hide("co_creators"),
+                        Show("co_creator_password", creator=creator),
+                    ]
+
+            null height 18
+
+            textbutton _("ЗАКРЫТЬ"):
+                xalign 0.5
+                text_size 44
+                text_color "#aaaaaa"
+                text_hover_color "#ff2f2f"
+                text_outlines [(2, "#000000", 0, 0)]
+                text_bold True
+                activate_sound UICLICK_SOUND
+                action Hide("co_creators")
+
+
+screen co_creator_password(creator):
+
+    modal True
+    zorder 220
+
+    default user_input = ""
+
+    add Solid("#000000d8")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1aee")
+        xpadding 70
+        ypadding 50
+        xsize 1100
+
+        vbox:
+            spacing 22
+
+            text creator["name"]:
+                xalign 0.5
+                size 64
+                color creator["color"]
+                outlines [(3, "#000000", 0, 0)]
+                bold True
+
+            text _("Введите пароль:"):
+                xalign 0.5
+                size 36
+                color "#dddddd"
+
+            null height 8
+
+            ## Поле ввода — на сером прямоугольнике, чтобы границы было
+            ## видно на тёмном фоне.
+            frame:
+                xalign 0.5
+                background Solid("#0d0d0d")
+                xsize 700
+                ysize 80
+                xpadding 18
+                ypadding 14
+
+                input value ScreenVariableInputValue("user_input"):
+                    color "#ffffff"
+                    size 40
+                    length 64
+                    yalign 0.5
+
+            null height 10
+
+            hbox:
+                xalign 0.5
+                spacing 50
+
+                textbutton _("ПРОВЕРИТЬ"):
+                    text_size 48
+                    text_color "#ffffff"
+                    text_hover_color "#ff2f2f"
+                    text_outlines [(2, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action Function(_check_co_creator_password,
+                                    creator, user_input)
+
+                textbutton _("НАЗАД"):
+                    text_size 48
+                    text_color "#aaaaaa"
+                    text_hover_color "#ff2f2f"
+                    text_outlines [(2, "#000000", 0, 0)]
+                    text_bold True
+                    activate_sound UICLICK_SOUND
+                    action [
+                        Hide("co_creator_password"),
+                        Show("co_creators"),
+                    ]
+
+
+screen co_creator_message(creator):
+
+    modal True
+    zorder 240
+
+    add Solid("#000000ee")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        background Solid("#1a1a1aee")
+        xpadding 70
+        ypadding 50
+        xmaximum 1300
+
+        vbox:
+            spacing 26
+
+            text creator["name"]:
+                xalign 0.5
+                size 64
+                color creator["color"]
+                outlines [(3, "#000000", 0, 0)]
+                bold True
+
+            text creator["message"]:
+                xalign 0.5
+                size 32
+                color "#ffffff"
+                text_align 0.5
+                layout "subtitle"
+                outlines [(1, "#000000", 0, 0)]
+
+            null height 14
+
+            textbutton _("СПАСИБО"):
+                xalign 0.5
+                text_size 50
+                text_color "#ffffff"
+                text_hover_color "#ff2f2f"
+                text_outlines [(2, "#000000", 0, 0)]
+                text_bold True
+                activate_sound UICLICK_SOUND
+                action [
+                    Hide("co_creator_message"),
+                    Show("co_creators"),
+                ]
 
 
 ################################################################################

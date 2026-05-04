@@ -47,7 +47,7 @@ screen main_menu():
         ypos 70
         spacing 20
 
-        textbutton _("[TG]"):
+        textbutton _("TELEGRAM"):
             text_size 44
             text_color "#5dadff"
             text_hover_color "#ff2f2f"
@@ -60,7 +60,7 @@ screen main_menu():
                         title=_("Перейти в Telegram-канал автора?"),
                         subtitle=_("Откроется браузер / приложение Telegram"))
 
-        textbutton _("[♥ Поддержать]"):
+        textbutton _("ПОДДЕРЖАТЬ ♥"):
             text_size 44
             text_color "#ff7a7a"
             text_hover_color "#ff2f2f"

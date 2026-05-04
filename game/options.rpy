@@ -37,9 +37,54 @@ define config.has_music = True
 define config.has_voice = True
 
 ## Громкость по умолчанию (0.0 - тишина, 1.0 - максимум).
-default preferences.volumes["music"] = 0.7
-default preferences.volumes["sfx"] = 0.8
-default preferences.volumes["voice"] = 1.0
+define config.default_music_volume = 0.7
+define config.default_sfx_volume = 0.8
+define config.default_voice_volume = 1.0
+
+## Отдельный канал для музыки в главном меню. Это позволяет иметь
+## независимый ползунок "громкость музыки в меню" в настройках,
+## независимо от громкости музыки внутри игры.
+##
+## Также регистрируем отдельные каналы для звуковых эффектов, чтобы
+## несколько ambient-звуков (двигатель + печка + ветер + ...) могли
+## звучать одновременно. По умолчанию у Ren'Py всего один `sound`
+## канал, и новый звук просто перебивал предыдущий. Все эти каналы
+## висят на миксере `sfx`, поэтому ползунок «Звуковые эффекты» в
+## настройках управляет всеми ими сразу.
+init python:
+    renpy.music.register_channel("menu_music", mixer="menu_music", loop=True)
+
+    # Зацикленные ambient-каналы (двигатель, печка, ветер, скрип пола,
+    # сердце, уличный фонарь). Все на миксере sfx.
+    renpy.music.register_channel("amb_engine",    mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_stove",     mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_wind",      mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_floor",     mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_heartbeat", mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_streetlamp", mixer="sfx", loop=True)
+
+    # Однократные SFX. loop=False — звук играет один раз и сам
+    # останавливается, когда файл кончится.
+    renpy.music.register_channel("sfx_navigator", mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_door",      mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_noise",     mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_scream",    mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_surprise",  mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_whisper",   mixer="sfx", loop=False)
+
+    # Глава 3 — дополнительные каналы.
+    # Зацикленные: рай (paradise66), мурлыканье кошки, поедание сосиски.
+    renpy.music.register_channel("amb_paradise",  mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_purr",      mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_eating",    mixer="sfx", loop=True)
+    # Однократные: мяу, СМС, контузия, женский смех, ворота в рай.
+    renpy.music.register_channel("sfx_meow",      mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_sms",       mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_contusion", mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_laughter",  mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_gates",     mixer="sfx", loop=False)
+    # Звук нажатия в меню (короткий, негромкий, реагирует на UI).
+    renpy.music.register_channel("sfx_uiclick",   mixer="sfx", loop=False)
 
 ################################################################################
 ## Автосохранение и переходы
@@ -66,6 +111,8 @@ init python:
     build.classify('game/images/**.png', 'all')
     build.classify('game/images/**.jpg', 'all')
     build.classify('game/images/**.webp', 'all')
+    build.classify('game/fonts/**.ttf', 'all')
+    build.classify('game/fonts/**.otf', 'all')
 
     ## Не включать исходники в архив (только скомпилированный код).
     build.include_old_themes = False

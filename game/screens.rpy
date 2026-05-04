@@ -40,36 +40,50 @@ screen main_menu():
         ypos 280
         spacing 35
 
+        ## Все кнопки главного меню: при нажатии шрифт становится
+        ## красным (text_selected_color/insensitive — не подходят, поэтому
+        ## используем text_hover_color "#ff2f2f", чтобы при тапе на
+        ## мобилке видно было красную подсветку, и activate_sound для
+        ## приятного клика).
+
         textbutton _("ИГРАТЬ"):
             text_size 90
             text_color "#ffffff"
-            text_hover_color "#CE93D8"
+            text_hover_color "#ff2f2f"
             text_outlines [(3, "#000000", 0, 0)]
             text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
             action Start()
 
         textbutton _("НАСТРОЙКИ"):
             text_size 64
             text_color "#ffffff"
-            text_hover_color "#CE93D8"
+            text_hover_color "#ff2f2f"
             text_outlines [(3, "#000000", 0, 0)]
             text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
             action ShowMenu("preferences")
 
         textbutton _("ПРОДОЛЖИТЬ"):
             text_size 56
             text_color "#dddddd"
-            text_hover_color "#CE93D8"
+            text_hover_color "#ff2f2f"
             text_outlines [(3, "#000000", 0, 0)]
             text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
             action Continue()
 
         textbutton _("ВЫЙТИ"):
             text_size 56
             text_color "#dddddd"
-            text_hover_color "#ff6b6b"
+            text_hover_color "#ff2f2f"
             text_outlines [(3, "#000000", 0, 0)]
             text_bold True
+            activate_sound UICLICK_SOUND
+            hover_sound UIHOVER_SOUND
             action Quit(confirm=False)
 
     text "MR LIMBO":
@@ -483,3 +497,63 @@ screen sfx_heartbeat_8s_stopper():
             Stop("amb_heartbeat", fadeout=1.5),
             Hide("sfx_heartbeat_8s_stopper"),
         ]
+
+
+################################################################################
+## ОГРАНИЧИТЕЛЬ СЕРДЦЕБИЕНИЯ — 20 СЕКУНД (сцена 3.13)
+################################################################################
+## В сцене 3.13 («Тихон мёртв») сердцебиение должно длиться ровно
+## 20 секунд, потом плавно затихать. Тот же приём, что и у 8-секундного
+## ограничителя.
+
+screen sfx_heartbeat_20s_stopper():
+
+    zorder -100
+
+    timer 20.0:
+        action [
+            Stop("amb_heartbeat", fadeout=1.5),
+            Hide("sfx_heartbeat_20s_stopper"),
+        ]
+
+
+################################################################################
+## ЭФФЕКТ МЕРЦАНИЯ ЭКРАНА (сцены 3.2, 3.3 — приступы Ани)
+################################################################################
+## Limbo попросил добавить мерцание при приступах. Полупрозрачный белый
+## слой пульсирует с разной интенсивностью — выглядит как короткие
+## вспышки/глитч сознания. Применяется к сцене целиком (zorder 200,
+## поверх всех картинок). Включается через `show screen seizure_flicker`,
+## выключается через `hide screen seizure_flicker`.
+
+transform _seizure_flicker_anim:
+    alpha 0.0
+    block:
+        ease 0.04 alpha 0.35
+        ease 0.04 alpha 0.0
+        pause 0.18
+        ease 0.04 alpha 0.55
+        ease 0.04 alpha 0.0
+        pause 0.42
+        ease 0.04 alpha 0.25
+        ease 0.04 alpha 0.0
+        pause 0.6
+        repeat
+
+
+screen seizure_flicker():
+
+    zorder 200
+
+    add Solid("#ffffff") size (config.screen_width, config.screen_height) at _seizure_flicker_anim
+
+
+################################################################################
+## ЗВУК НАЖАТИЯ КНОПКИ В МЕНЮ
+################################################################################
+## Один общий play-action, который вешается на activate_sound у кнопок
+## главного меню. Файл лежит в audio/sfx/ui_click.mp3 — короткий
+## приятный «тап». Канал sfx_uiclick зарегистрирован в options.rpy.
+
+define UICLICK_SOUND = "audio/sfx/ui_click.mp3"
+define UIHOVER_SOUND = "audio/sfx/ui_click.mp3"

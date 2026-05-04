@@ -72,6 +72,20 @@ init python:
     renpy.music.register_channel("sfx_surprise",  mixer="sfx", loop=False)
     renpy.music.register_channel("sfx_whisper",   mixer="sfx", loop=False)
 
+    # Глава 3 — дополнительные каналы.
+    # Зацикленные: рай (paradise66), мурлыканье кошки, поедание сосиски.
+    renpy.music.register_channel("amb_paradise",  mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_purr",      mixer="sfx", loop=True)
+    renpy.music.register_channel("amb_eating",    mixer="sfx", loop=True)
+    # Однократные: мяу, СМС, контузия, женский смех, ворота в рай.
+    renpy.music.register_channel("sfx_meow",      mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_sms",       mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_contusion", mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_laughter",  mixer="sfx", loop=False)
+    renpy.music.register_channel("sfx_gates",     mixer="sfx", loop=False)
+    # Звук нажатия в меню (короткий, негромкий, реагирует на UI).
+    renpy.music.register_channel("sfx_uiclick",   mixer="sfx", loop=False)
+
 ################################################################################
 ## Автосохранение и переходы
 ################################################################################
